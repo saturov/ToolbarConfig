@@ -52,11 +52,24 @@ public class ToolbarConfig {
         return new ToolbarConfig(activity);
     }
 
-    public ToolbarConfig setId(int toolbarId) {
+    /**
+     * Provide ID of the toolbar to find it on the screen layout
+     *
+     * @param toolbarId Resource ID of the toolbar from the current screen layout
+     */
+    public ToolbarConfig fromId(int toolbarId) {
         this.toolbarId = toolbarId;
         return this;
     }
 
+    /**
+     * Set the title of this toolbar.
+     * <p>
+     * <p>A title should be used as the anchor for a section of content. It should
+     * describe or name the content being viewed.</p>
+     *
+     * @param titleId Resource ID of a string to set as title
+     */
     public ToolbarConfig setTitleId(@StringRes int titleId) {
         this.titleId = titleId;
         return this;
@@ -98,16 +111,35 @@ public class ToolbarConfig {
         return this;
     }
 
-    public ToolbarConfig setOnMenuItemClickListener(OnClickMenuItemListener onClickMenuItemListener) {
-        this.onClickMenuItemListener = onClickMenuItemListener;
+    /**
+     * Set a listener to respond to menu item click events.
+     * <p>
+     * <p>This listener will be invoked whenever a user selects a menu item from
+     * the action buttons presented at the end of the toolbar or the associated overflow.</p>
+     *
+     * @param listener Listener to set
+     */
+    public ToolbarConfig setOnMenuItemClickListener(OnClickMenuItemListener listener) {
+        this.onClickMenuItemListener = listener;
         return this;
     }
 
-    public ToolbarConfig setOnNavigationClickListener(View.OnClickListener onClickNavigationItemListener) {
-        this.onClickNavigationListener = onClickNavigationItemListener;
+    /**
+     * Set a listener to respond to navigation events.
+     * <p>
+     * <p>This listener will be called whenever the user clicks the navigation button
+     * at the start of the toolbar. An icon must be set for the navigation button to appear.</p>
+     *
+     * @param listener Listener to set
+     */
+    public ToolbarConfig setOnNavigationClickListener(View.OnClickListener listener) {
+        this.onClickNavigationListener = listener;
         return this;
     }
 
+    /**
+     * Apply all changes and render toolbar.
+     */
     public void apply() {
         if (activity != null) {
             Toolbar toolbar = activity.findViewById(toolbarId);
@@ -124,6 +156,7 @@ public class ToolbarConfig {
         configDisplayHomeAsUpEnabled(activity.getSupportActionBar());
         configHomeAsUpIndicator(activity.getSupportActionBar());
         configOnMenuItemClickListener(toolbar);
+        configOnNavigationClickListener(toolbar);
     }
 
     private void configTitle(Toolbar toolbar) {
@@ -167,6 +200,19 @@ public class ToolbarConfig {
                         ToolbarConfig.this.onClickMenuItemListener.onClickMenuItem(item);
                     }
                     return true;
+                }
+            });
+        }
+    }
+
+    private void configOnNavigationClickListener(Toolbar toolbar) {
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (ToolbarConfig.this.onClickNavigationListener != null) {
+                        ToolbarConfig.this.onClickNavigationListener.onClick(view);
+                    }
                 }
             });
         }
